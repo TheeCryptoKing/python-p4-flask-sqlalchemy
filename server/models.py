@@ -6,3 +6,30 @@ metadata = MetaData(naming_convention={
 })
 
 db = SQLAlchemy(metadata=metadata)
+
+# The structure of models in Flask-SQLAlchemy is identical to that of SQLAlchemy models with one exception: rather than importing individual fields from the SQLAlchemy module, we import a SQLAlchemy class from Flask-SQLAlchemy that contains all of the same fields as attributes. This behaves similarly to declarative_base
+# Like Flask-SQLAlchemy with vanilla SQLAlchemy, Flask-Migrate is a wrapper for Alembic with minimal changes to allow it to integrate better with Flask applications. 
+
+class Owner(db.Model):
+    __tablename__ = 'owners'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+
+    pets = db.relationship('Pet', backref='owner')
+
+    def __repr__(self):
+        return f'<Pet Owner {self.name}>'
+
+class Pet(db.Model):
+    __tablename__ = 'pets'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    species = db.Column(db.String)
+
+    owner_id = db.Column(db.Integer, db.ForeignKey('owners.id'))
+
+    def __repr__(self):
+        return f'<Pet {self.name}, {self.species}>'
+
